@@ -9,7 +9,7 @@ import pandas as pd
 from data import SegmentsDataset
 import configparser
 config = configparser.ConfigParser()
-config_path=r'config\config.ini'
+config_path=os.path.join('config','config.ini')
 config.read(config_path)
 
 
@@ -65,7 +65,7 @@ def predict_with_model(model,test_loader) -> np.array:
     return ids,test_predicts
 
 if __name__ == '__main__':
-    model_path=r'output\best_model_fold_0.pth'
+    model_path=os.path.join('output','best_model_fold_0.pth')
     model = ClassifierModel()
     # model.cuda()
     if os.path.exists(model_path):
@@ -75,7 +75,8 @@ if __name__ == '__main__':
         last_epoch = last_checkpoint['epoch']
         print(f'loaded the model from epoch {last_epoch}')
 
-    ids_path=r'dataset\test_ids.csv'
-    features_path=r'dataset\test_features.npy'
+    data_path='dataset'
+    ids_path=os.path.join(data_path,'test_ids.csv')
+    features_path=os.path.join('dataset','test_features.npy')
     test_loader = load_test_data(ids_path,features_path)
     test_ids,test_predicts = predict_with_model(model,test_loader)

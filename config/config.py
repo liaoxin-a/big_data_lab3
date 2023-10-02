@@ -1,16 +1,14 @@
 import os
 import configparser
 config = configparser.ConfigParser()
-config['DEFAULT'] = {'SEGMENT_LEN': '5',
+config['default'] = {'SEGMENT_LEN': '5',
                     'NUM_FOLDS'  : '10',
                     'NUM_MODELS' : '3',
                     'BATCH_SIZE' : '24',
                     'LOG_FREQ'   : '1000',
                     'NUM_CLASSES': '1000',
                     'NUM_EPOCHS' : '25',
-                    'FEATURES_DIM':'1152'}
-
-config['TRAIN'] = {
+                    'FEATURES_DIM':'1152',
                     'LEARNING_RATE': '0.00011729283760398037',
                     'WEIGHT_DECAY' : '0.0011412688966608406',
                     'LR_FACTOR'    : '0.1',

@@ -8,11 +8,11 @@ sys.path.insert(1, os.path.join(os.getcwd(), "src"))
 from model import ClassifierModel
 
 config = configparser.ConfigParser()
-config_path=r'config\config.ini'
+config_path=os.path.join('config','config.ini')
 config.read(config_path)
-FEATURES_DIM=config['DEFAULT'].getint('features_dim')
-BATCH_SIZE=config['DEFAULT'].getint('batch_size')
-NUM_CLASSES=config['DEFAULT'].getint('num_classes')
+FEATURES_DIM=config['default'].getint('features_dim')
+BATCH_SIZE=config['default'].getint('batch_size')
+NUM_CLASSES=config['default'].getint('num_classes')
 
 class TestMultiModel(unittest.TestCase):
 

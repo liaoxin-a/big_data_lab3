@@ -1,14 +1,13 @@
 import torch
 import torch.nn as nn
 from typing import Any, Dict, List, Optional, Tuple, Union
-
+import os
 import configparser
 config = configparser.ConfigParser()
-config_path=r'config\config.ini'
+config_path=os.path.join('config','config.ini')
 config.read(config_path)
-
-FEATURES_DIM=config['DEFAULT'].getint('features_dim')
-NUM_CLASSES=config['DEFAULT'].getint('num_classes')
+FEATURES_DIM=config['default'].getint('features_dim')
+NUM_CLASSES=config['default'].getint('num_classes')
 
 class SwishActivation(nn.Module):
     def __init__(self) -> None:

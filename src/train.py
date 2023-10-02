@@ -13,19 +13,19 @@ from data import load_train_data
 
 import configparser
 config = configparser.ConfigParser()
-config_path=r'config\config.ini'
+config_path=os.path.join('config','config.ini')
 config.read(config_path)
-NUM_MODELS=config['DEFAULT'].getint('num_models')
-NUM_EPOCHS=config['DEFAULT'].getint('num_epochs')
-NUM_CLASSES=config['DEFAULT'].getint('num_classes')
-LOG_FREQ=config['DEFAULT'].getint('log_freq')
+NUM_MODELS=config['default'].getint('num_models')
+NUM_EPOCHS=config['default'].getint('num_epochs')
+NUM_CLASSES=config['default'].getint('num_classes')
+LOG_FREQ=config['default'].getint('log_freq')
 
-LEARNING_RATE   = config['TRAIN'].getfloat('learning_rate')
-WEIGHT_DECAY    = config['TRAIN'].getfloat('weight_decay')
-LR_FACTOR       = config['TRAIN'].getfloat('lr_factor')
-LR_PATIENCE     = config['TRAIN'].getfloat('lr_patience')
-LR_MINIMUM      = config['TRAIN'].getfloat('lr_minimum')
-LR_THRESHOLD    = config['TRAIN'].getfloat('lr_threshold')
+LEARNING_RATE   = config['default'].getfloat('learning_rate')
+WEIGHT_DECAY    = config['default'].getfloat('weight_decay')
+LR_FACTOR       = config['default'].getfloat('lr_factor')
+LR_PATIENCE     = config['default'].getfloat('lr_patience')
+LR_MINIMUM      = config['default'].getfloat('lr_minimum')
+LR_THRESHOLD    = config['default'].getfloat('lr_threshold')
 
 class AverageMeter:
     ''' Computes and stores the average and current value. '''
@@ -234,8 +234,8 @@ def inference_for_testset(test_predicts: np.array, data_loader: Any, model: Any)
     print('ids', ids.shape)
     return ids
 
-def get_model_path(fold_num: int) -> str:
-    return os.path.join(r'output',f'best_model_fold_{fold_num}.pth')
+def get_model_path(output_path,fold_num: int) -> str:
+    return os.path.join(output_path,f'best_model_fold_{fold_num}.pth')
 
 
 def train_model(fold_num: int,ids_path:str,features_path:str) -> float:
@@ -287,7 +287,11 @@ def train_model(fold_num: int,ids_path:str,features_path:str) -> float:
             best_epoch = epoch
 
         if is_best:
-            best_model_path = get_model_path(fold_num)
+            output_path='output'
+            if not os.path.exists(output_path):
+                os.makedirs(output_path)
+            best_model_path = get_model_path(output_path,fold_num)
+
 
             data_to_save = {
                 'epoch': epoch,
@@ -306,7 +310,9 @@ def train_model(fold_num: int,ids_path:str,features_path:str) -> float:
 
 
 if __name__ == '__main__':
-    ids_path=r'dataset\train_ids.csv'
-    features_path=r'dataset\train_features.npy'
+    data_path='dataset'
+    ids_path=os.path.join(data_path,'train_ids.csv')
+    features_path=os.path.join('dataset','train_features.npy')
+   
     for fold_idx in range(NUM_MODELS):
         train_model(fold_idx,ids_path,features_path)

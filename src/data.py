@@ -2,14 +2,15 @@ import numpy as np
 import torch
 from typing import Any, Dict, List, Optional, Tuple, Union
 import pandas as pd
+import os
 import configparser
 config = configparser.ConfigParser()
-config_path=r'config\config.ini'
+config_path=os.path.join('config','config.ini')
 config.read(config_path)
 
 
-NUM_FOLDS=config['DEFAULT'].getint('num_folds')
-BATCH_SIZE=config['DEFAULT'].getint('batch_size')
+NUM_FOLDS=config['default'].getint('num_folds')
+BATCH_SIZE=config['default'].getint('batch_size')
 
 
 def dequantize(feat_vector: np.array, max_quantized_value=2, min_quantized_value=-2) -> np.array:
