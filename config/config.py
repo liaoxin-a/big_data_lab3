@@ -3,11 +3,11 @@ import configparser
 config = configparser.ConfigParser()
 config['default'] = {'SEGMENT_LEN': '5',
                     'NUM_FOLDS'  : '10',
-                    'NUM_MODELS' : '3',
+                    'NUM_MODELS' : '2',
                     'BATCH_SIZE' : '24',
                     'LOG_FREQ'   : '1000',
                     'NUM_CLASSES': '1000',
-                    'NUM_EPOCHS' : '25',
+                    'NUM_EPOCHS' : '5',
                     'FEATURES_DIM':'1152',
                     'LEARNING_RATE': '0.00011729283760398037',
                     'WEIGHT_DECAY' : '0.0011412688966608406',
