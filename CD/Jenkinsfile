@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDS=credentials('big_data')
+        LC_ALL = "en_US.UTF-8"
+        LANG    = "en_US.UTF-8"
+        LANGUAGE = "en_US.UTF-8"
+    }
+
+    options {
+            timestamps()
+            skipDefaultCheckout(true)
+        }
+   
+    stages {
+        stage('Login'){
+            steps{
+                sh 'docker login -u $DOCKERHUB_CREDS -p $DOCKERHUB_CREDS_PSW'
+                }
+            }
+
+        stage('Pull image'){
+            steps{
+                sh '''
+                    docker pull liaox1/big_data:2.0
+                    docker pull liaox1/db_yt8m:1.0  
+                '''
+            }
+        }
+
+        stage('Run container'){
+            steps{
+                sh '''
+                    docker run --name bigdata_lab2_cd -d liaox1/big_data:2.0
+                '''
+            }
+        }
+
+	}
+
+    post {
+        always {
+            sh 'docker stop bigdata_lab2_cd && docker logout'
+        }
+    
+    }
+}
