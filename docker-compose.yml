@@ -5,7 +5,7 @@ services:
     container_name: lab2_mysql
     restart: always
     environment:
-      MYSQL_DATABASE: ${name_db}
+      MYSQL_DATABASE: 'db'
       MYSQL_ROOT_PASSWORD: ${pass}
     image: liaox1/db_yt8m:1.0         
     ports:
@@ -14,7 +14,7 @@ services:
     build: .
     container_name: c2_bigdata
     environment:
-      NAME_DATABASE: ${name_db}
+      NAME_DATABASE: 'db'
       DB_USER: ${user}
       DB_PASS: ${pass}
     command: bash -c "python src/train.py && python src/predict.py -m && coverage run src/unit_tests/test_preprocess.py && coverage run -a src/unit_tests/test_training.py && coverage report -m"
