@@ -1,8 +1,8 @@
 import numpy as np
 import torch
 from typing import Any, Dict, List, Optional, Tuple, Union
-import pandas as pd
 import os
+import mysql.connector
 import configparser
 config = configparser.ConfigParser()
 config_path=os.path.join('config','config.ini')
@@ -69,15 +69,14 @@ class SegmentsDataset(torch.utils.data.Dataset):
             if self.labels[0]==None:
                 return x, 0
             else:
-                return x,self.labels[index].item()
+                return x,torch.tensor(self.labels[index].item(),dtype=torch.long)
         else:
             y = labels[index].item()
+            y=torch.tensor(y,dtype=torch.long)
             return x, y
 
     def __len__(self) -> int:
         return self.ids.shape[0]
-
-
 
 
 def get_train_val_split(items: List[str], split_num: int) -> Tuple[np.array, np.array]:
@@ -86,9 +85,43 @@ def get_train_val_split(items: List[str], split_num: int) -> Tuple[np.array, np.
     train_idx, val_idx = list(np.concatenate(after_split[:-1])),list(after_split[-1])
     return train_idx, val_idx
 
-def load_train_data(ids_path,features_path) -> Any:
-    df=pd.read_csv(ids_path) 
-    all_ids, all_labels, all_scores,all_labels_index = df['all_ids'],df['all_labels'],df['all_scores'],df['labels']
+def connect2mysql():
+    user_value=os.getenv("DB_USER")
+    password_value=os.getenv("DB_PASS")
+    host_value='mysql'
+    database_value= os.getenv("NAME_DATABASE")
+    type_connect=False
+
+    try:
+        connection = mysql.connector.connect(
+            user=user_value, password=password_value, host=host_value, port='3306', database=database_value)
+        print("mysql connected")
+        type_connect=True
+    except:
+        return type_connect,None
+    return type_connect,connection
+
+
+
+def get_data_from_mysql(mode='train'):
+    type_r,connection = connect2mysql()
+    assert type_r==True
+    cursor = connection.cursor()
+    cursor.execute("Select * FROM %s"%(mode))
+    df = cursor.fetchall()
+    all_ids, all_labels, all_scores,all_labels_index=zip(*df)
+    cursor.close()
+    connection.close()
+
+    return all_ids, all_labels, all_scores,all_labels_index
+
+
+
+
+
+def load_train_data(features_path) -> Any:
+
+    all_ids, all_labels, all_scores,all_labels_index = get_data_from_mysql(mode='train')
 
     unique_ids = sorted(set(all_ids))
     # unique_train_ids, unique_val_ids = get_train_val_split(unique_ids, fold)

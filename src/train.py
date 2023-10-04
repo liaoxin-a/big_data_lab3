@@ -3,7 +3,7 @@ import os
 import time
 from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
-import pandas as pd
+# import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -200,7 +200,7 @@ def validate(val_loader: Any, model: Any, epoch: int) -> float:
 
     assert val_true.size == val_pred.shape[0]
 
-    masks = np.eye(NUM_CLASSES)[val_true]   # convert to one-hot encoding
+    masks = np.eye(NUM_CLASSES)[val_true.astype('int64')]   # convert to one-hot encoding
     actuals = masks * np.expand_dims(val_scores, axis=-1)
 
     metric.accumulate(val_pred, actuals, masks)
@@ -238,7 +238,7 @@ def get_model_path(output_path,fold_num: int) -> str:
     return os.path.join(output_path,f'best_model_fold_{fold_num}.pth')
 
 
-def train_model(fold_num: int,ids_path:str,features_path:str) -> float:
+def train_model(fold_num: int,features_path:str) -> float:
     print('=' * 80)
 
     model = ClassifierModel()
@@ -247,7 +247,7 @@ def train_model(fold_num: int,ids_path:str,features_path:str) -> float:
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
 
-    train_loader, val_loader = load_train_data(ids_path,features_path)
+    train_loader, val_loader = load_train_data(features_path)
     lr_scheduler = lr_sched.ReduceLROnPlateau(optimizer, mode='max', factor=LR_FACTOR,
                                       patience=LR_PATIENCE, threshold=LR_THRESHOLD,
                                       min_lr=LR_MINIMUM)
@@ -311,8 +311,7 @@ def train_model(fold_num: int,ids_path:str,features_path:str) -> float:
 
 if __name__ == '__main__':
     data_path='dataset'
-    ids_path=os.path.join(data_path,'train_ids.csv')
     features_path=os.path.join('dataset','train_features.npy')
    
     for fold_idx in range(NUM_MODELS):
-        train_model(fold_idx,ids_path,features_path)
+        train_model(fold_idx,features_path)

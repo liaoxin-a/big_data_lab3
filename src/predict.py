@@ -5,8 +5,7 @@ import torch.nn as nn
 from glob import glob
 from typing import Any, Dict, List, Optional, Tuple, Union
 from model import ClassifierModel
-import pandas as pd
-from data import SegmentsDataset
+from data import SegmentsDataset,get_data_from_mysql
 import configparser
 config = configparser.ConfigParser()
 config_path=os.path.join('config','config.ini')
@@ -37,10 +36,8 @@ def inference_for_testset(data_loader: Any, model: Any) -> np.array:
     return ids,preds
 
 
-def load_test_data(ids_path,features_path) -> Any:
-    df=pd.read_csv(ids_path) 
-    all_ids, all_labels, all_scores,all_labels_index = df['all_ids'],df['all_labels'],df['all_scores'],df['labels']
-
+def load_test_data(features_path) -> Any:
+    all_ids, all_labels, all_scores,all_labels_index = get_data_from_mysql(mode='test')
 
     test_ids = np.array(all_ids)
     all_labels = np.array(all_labels)
@@ -76,7 +73,6 @@ if __name__ == '__main__':
         print(f'loaded the model from epoch {last_epoch}')
 
     data_path='dataset'
-    ids_path=os.path.join(data_path,'test_ids.csv')
     features_path=os.path.join('dataset','test_features.npy')
-    test_loader = load_test_data(ids_path,features_path)
+    test_loader = load_test_data(features_path)
     test_ids,test_predicts = predict_with_model(model,test_loader)

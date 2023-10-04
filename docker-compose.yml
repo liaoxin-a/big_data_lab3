@@ -1,9 +1,25 @@
-version: '3.8'
+version: '3.9'
 services:
-   web:
-       build: .
-       container_name: c1_bigdata
-       command: bash -c "python src/train.py && python src/predict.py -m && coverage run src/unit_tests/test_preprocess.py && coverage run -a src/unit_tests/test_training.py && coverage report -m"
-       ports:
-           - 8000:8000
-       image: liaox1/big_data:1.0
+  mysql:
+    build: ./mysql/
+    container_name: lab2_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${name_db}
+      MYSQL_ROOT_PASSWORD: ${pass}
+    image: liaox1/db_yt8m:1.0         
+    ports:
+      - '3306:3306'
+  web:
+    build: .
+    container_name: c2_bigdata
+    environment:
+      NAME_DATABASE: ${name_db}
+      DB_USER: ${user}
+      DB_PASS: ${pass}
+    command: bash -c "python src/train.py && python src/predict.py -m && coverage run src/unit_tests/test_preprocess.py && coverage run -a src/unit_tests/test_training.py && coverage report -m"
+    ports:
+      - 8000:8000
+    image: liaox1/big_data:2.0
+    depends_on:
+        - mysql
