@@ -67,7 +67,8 @@ C:.
 5. Создать CD pipeline для запуска контейнера и проведения функционального тестирования по сценарию, запуск должен стартовать по требованию или расписанию или как вызов с последнего этапа CI pipeline;
 
 ## Hashicorp Vault
-    HashiCorp Vault — инструмент с открытым исходным кодом, который обеспечивает безопасное хранение и доступ к различным секретам (паролям, сертификатам, токенам). Образ приложения содержит предустановленную сборку HashiCorp Vault, которая при помощи Yandex Key Management Service дополнительно поддерживает Auto Unseal .
+ 
+>HashiCorp Vault — инструмент с открытым исходным кодом, который обеспечивает безопасное хранение и доступ к различным секретам (паролям, сертификатам, токенам). Образ приложения содержит предустановленную сборку HashiCorp Vault, которая при помощи Yandex Key Management Service дополнительно поддерживает Auto Unseal .
 
 ## Настроить хранилище секретов:
 
@@ -77,7 +78,7 @@ docker run -d --rm --name vault-server --cap-add=IPC_LOCK -p 8200:8200 -e 'VAULT
 ```
 run vault-server
 ![containers](https://github.com/liaoxin-a/big_data_lab3/blob/main/imgs/containers.PNG)
-add mysql password
+add mysql password in secret path
 ![valus](https://github.com/liaoxin-a/big_data_lab3/blob/main/imgs/valus.PNG)
 
 ## Реализовать взаимодействие: 
