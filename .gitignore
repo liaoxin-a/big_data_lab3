@@ -2,4 +2,7 @@
 # /dataset
 __pycache__/
 .env
-images
+imgs
+#for test
+python
+CI/Jenkinsfile

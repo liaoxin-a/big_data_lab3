@@ -2,7 +2,7 @@ version: '3.9'
 services:
   mysql:
     build: ./mysql/
-    container_name: lab2_mysql
+    container_name: mysql_yt8m
     restart: always
     environment:
       MYSQL_DATABASE: 'db'
@@ -10,16 +10,25 @@ services:
     image: liaox1/db_yt8m:1.0         
     ports:
       - '3306:3306'
+  
   web:
     build: .
     container_name: c2_bigdata
     environment:
+      HVAC_CLIENT: 'http://host.docker.internal:8200'
       NAME_DATABASE: 'db'
-      DB_USER: ${user}
-      DB_PASS: ${pass}
+      HVAC_CLIENT_TOKEN: ${token}
     command: bash -c "python src/train.py && python src/predict.py -m && coverage run src/unit_tests/test_preprocess.py && coverage run -a src/unit_tests/test_training.py && coverage report -m"
     ports:
       - 8000:8000
-    image: liaox1/big_data:2.0
+    image: liaox1/big_data:3.0
     depends_on:
         - mysql
+    extra_hosts:
+        - 'host.docker.internal:host-gateway'
+
+
+    
+
+
+

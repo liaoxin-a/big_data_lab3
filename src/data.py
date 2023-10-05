@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from typing import Any, Dict, List, Optional, Tuple, Union
 import os
+import hvac
 import mysql.connector
 import configparser
 config = configparser.ConfigParser()
@@ -85,9 +86,19 @@ def get_train_val_split(items: List[str], split_num: int) -> Tuple[np.array, np.
     train_idx, val_idx = list(np.concatenate(after_split[:-1])),list(after_split[-1])
     return train_idx, val_idx
 
+def connect2vault():
+    hvac_client_url=os.getenv("HVAC_CLIENT")
+    hvac_token=os.getenv("HVAC_CLIENT_TOKEN")
+    client = hvac.Client(url=hvac_client_url,token=hvac_token)
+    print(client.is_authenticated())
+    read_response = client.secrets.kv.read_secret_version(path='mysql')
+    return read_response
+
+
 def connect2mysql():
-    user_value=os.getenv("DB_USER")
-    password_value=os.getenv("DB_PASS")
+    user_value='root'
+    hvac_response=connect2vault()
+    password_value=hvac_response['data']['data']['root']
     host_value='mysql'
     database_value= os.getenv("NAME_DATABASE")
     type_connect=False

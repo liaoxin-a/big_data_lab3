@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDS=credentials('big_data')
+        MYSQL_ROOT_CREDS=credentials('mysql')
+        VAULT_TOKEN_CREDS=credentials('token')
         LC_ALL = "en_US.UTF-8"
         LANG    = "en_US.UTF-8"
         LANGUAGE = "en_US.UTF-8"
@@ -13,10 +15,23 @@ pipeline {
             skipDefaultCheckout(true)
         }
     stages {
+        stage('export env') {
+            steps {
+                sh 'export pass=$MYSQL_ROOT_CREDS_PSW && export token=$VAULT_TOKEN_CREDS_PSW'
+				}
+			}
+
+        stage('check env') {
+            steps {
+                sh 'echo ${pass} && echo ${token}'
+				}
+			}
+        
+
         stage('Clone github repository') {
             steps {
                 cleanWs()
-                sh 'git clone -b main https://github.com/liaoxin-a/big_data_lab2.git'
+                sh 'git clone -b main https://github.com/liaoxin-a/big_data_lab3.git'
 				}
 			}
 
@@ -26,8 +41,6 @@ pipeline {
 				}
 			}
 
-        
- 
         
         stage('Login'){
             steps{
